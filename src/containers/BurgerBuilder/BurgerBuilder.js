@@ -3,29 +3,25 @@ import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal'
 import OrderSummary from '../../components/Burger/OrderSummary'
+import {connect} from 'react-redux'
+import * as actionTypes from '../../store/actions'
 
-const IngredientPrices = {
 
-  salad:0.5,
-  cheese:0.5,
-  meat:1.5,
-  bacon:0.7
-}
 
 class BurgerBuilder extends Component  {
 
   state = {
 
-    ingredients:{
-      salad:0,
-      bacon:0,
-      cheese:0,
-      meat:0
-    },
+  //  ingredients:{
+  //    salad:0,
+  //    bacon:0,
+  //    cheese:0,
+  //    meat:0
+  //  },
 
-    totalPrice:4,
+  //  totalPrice:4,
 
-    purchasable:false,
+  //  purchasable:false,
 
     purchasing: false
 
@@ -62,9 +58,10 @@ class BurgerBuilder extends Component  {
 
   }
 
+
   updatePurchasable (){
 
-      let ingredients = {...this.state.ingredients}
+      let ingredients = {...this.props.ingredients}
 
       let sum = Object.keys(ingredients)
                     .map((key)=>{
@@ -75,16 +72,11 @@ class BurgerBuilder extends Component  {
                     })
 
 
-      if(sum>0){
-        this.setState({purchasable:true})
-      } else {
-        this.setState({purchasable:false})
-
-      }
+      return sum > 0
 
   }
 
-  addIngredient = (type) =>{
+  /*addIngredient = (type) =>{
 
     let oldCount = this.state.ingredients[type]
     let newCount = oldCount + 1
@@ -103,8 +95,6 @@ class BurgerBuilder extends Component  {
   }
 
   removeIngredient = (type) =>{
-
-
 
       let oldCount = this.state.ingredients[type]
 
@@ -127,10 +117,10 @@ class BurgerBuilder extends Component  {
 
 
 
-  }
+  }*/
   render(){
 
-    let disabledInfo = {...this.state.ingredients}
+    let disabledInfo = {...this.props.ingredients}
 
     for(let key in disabledInfo){
       disabledInfo[key] = disabledInfo[key] <= 0
@@ -141,20 +131,20 @@ class BurgerBuilder extends Component  {
 
           <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler} >
 
-            <OrderSummary ingredients={this.state.ingredients} continue={this.continuePurchaseHandler}
-                      cancel={this.purchaseCancelHandler} totalPrice={this.state.totalPrice}/>
+            <OrderSummary ingredients={this.props.ingredients} continue={this.continuePurchaseHandler}
+                      cancel={this.purchaseCancelHandler} totalPrice={this.props.totalPrice}/>
 
           </Modal>
 
-          <Burger ingredients={this.state.ingredients}/>
+          <Burger ingredients={this.props.ingredients}/>
 
           <BuildControls
-            addIngredient={this.addIngredient}
-            removeIngredient={this.removeIngredient}
-            price={this.state.totalPrice}
+            addIngredient={this.props.onIngAdded}
+            removeIngredient={this.props.onIngRemoved}
+            price={this.props.totalPrice}
             disabled={disabledInfo}
             purchasing={this.purchaseHandler}
-            purchasable={this.state.purchasable}
+            purchasable={this.updatePurchasable()}
           />
 
         </>
@@ -163,4 +153,20 @@ class BurgerBuilder extends Component  {
 
 }
 
-export default BurgerBuilder
+const mapStateToProps = state => {
+    return{
+      ingredients:state.ingredients,
+      totalPrice: state.totalPrice
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return{
+      onIngAdded: (ingName) => {dispatch({type:actionTypes.ADD_INGREDIENT, ingredientName:ingName})},
+      onIngRemoved: (ingName) => {dispatch({type:actionTypes.REMOVE_INGREDIENT, ingredientName:ingName})}
+
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder)
