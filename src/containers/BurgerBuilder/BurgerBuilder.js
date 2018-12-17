@@ -4,7 +4,6 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal'
 import OrderSummary from '../../components/Burger/OrderSummary'
 
-
 const IngredientPrices = {
 
   salad:0.5,
@@ -47,7 +46,20 @@ class BurgerBuilder extends Component  {
 
   continuePurchaseHandler = ()=>{
 
-    alert('continue')
+
+    let queryParams = []
+
+    for (let key in this.state.ingredients){
+
+      queryParams.push(encodeURIComponent(key) + '=' +
+        encodeURIComponent(this.state.ingredients[key]))
+
+    }
+
+    let queryString = queryParams.join('&')
+
+      this.props.history.push({pathname:'/checkout', search: '?' + queryString})
+
   }
 
   updatePurchasable (){

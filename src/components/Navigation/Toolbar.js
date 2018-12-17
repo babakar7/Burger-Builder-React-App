@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './Toolbar.module.css'
 import burgerLogo from '../../assets/burger-logo.png'
+import {NavLink} from 'react-router-dom'
 
 const toolbar = () => {
 
@@ -13,14 +14,12 @@ const toolbar = () => {
 
           <ul style={{marginRight:'100px'}}>
             <li className={styles.NavItem}>
-             <a href="/">  Burger Builder </a>
+
+             <NavLink to="/">BurgerBuilder</NavLink>
+
             </li>
 
-            <li className={styles.NavItem}>
-
-            <a href="/">  Checkout </a>
-            
-            </li>
+          
 
           </ul>
 
